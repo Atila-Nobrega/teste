@@ -5,3 +5,4 @@ class Camera(BaseModel):
 	descricao: str
 	latitude: float
 	longitude: float
+	streamurl: str

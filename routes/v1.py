@@ -1,13 +1,12 @@
-from fastapi import FastAPI, Body, APIRouter
-from utils.db import execute, fetch
+from fastapi import Body, APIRouter
 from models.camera import Camera
 from models.registro import Registro
 from utils.db_functions import (
-    db_inserir_camera,
-    db_pegar_camera,
-    db_pegar_todas_cameras,
-    db_remover_camera,
-    db_atualizar_camera
+	db_inserir_camera,
+	db_pegar_camera,
+	db_pegar_todas_cameras,
+	db_remover_camera,
+	db_atualizar_camera
 )
 
 app_v1 = APIRouter()
@@ -15,8 +14,11 @@ app_v1 = APIRouter()
 
 @app_v1.post("/camera")
 async def post_camera(camera: Camera):
-	await db_inserir_camera(camera)
-	return {"Resultado": "Camera criada"}
+	result = await db_inserir_camera(camera)
+	if result:
+		return {"Resultado": "Camera criada"}
+	else:
+		return {"Resultado": "Já existe uma camera com esse ID!"}
 
 
 @app_v1.get("/camera/{id}")
@@ -41,8 +43,11 @@ async def get_cameras():
 
 @app_v1.delete("/camera")
 async def delete_camera(id: int = Body(..., embed=True)):
-	await db_remover_camera(id)
-	return {"Resultado": "Camera removida"}
+	result = await db_remover_camera(id)
+	if result:
+		return {"Resultado": "Camera removida"}
+	else:
+		return {"Resultado": "Esse id não existe!"}
 
 
 @app_v1.put("/camera")
@@ -52,5 +57,5 @@ async def put_camera(camera: Camera):
 		
 		return {"Resultado": "Camera atualizada"}
 	else:
-		return {"Resultado": "É preciso inserir um id"}
+		return {"Resultado": "É preciso inserir um id valido"}
 		
